@@ -1,0 +1,35 @@
+(add-cflag "`curl-config --cflags --libs`")
+;;(system-include "curl/curl.h")
+(relative-include "curl_helper.h")
+(add-cflag "-Wno-incompatible-pointer-types-discards-qualifiers")
+
+(register-type CURL)
+(register-type CURLcode)
+
+(defmodule Curl
+  ;; Init
+  (register global-init (λ [Int] ()) "curl_global_init")
+  (register easy-init (λ [] (Ptr CURL)) "curl_easy_init")
+  (register global-default Int "CURL_GLOBAL_DEFAULT")
+
+  ;; Cleanup
+  (register easy-cleanup (λ [CURL] CURLcode) "curl_easy_cleanup")
+  (register global-cleanup (λ [] ()) "curl_global_cleanup")
+
+  ;; Options
+  (register easy-setopt (λ [(Ptr CURL) Int a] ()) "curl_easy_setopt")
+  (register opt-url Int "CURLOPT_URL")
+  (register opt-write-function Int "CURLOPT_WRITEFUNCTION")
+  (register opt-write-data Int "CURLOPT_WRITEDATA")
+
+  ;; Perform request
+  (register easy-perform (λ [(Ptr CURL)] CURLcode) "curl_easy_perform")
+
+  ;; Error handling
+  (register easy-strerror (λ [CURLcode] (Ptr Char)) "curl_easy_strerror")
+  (register ok CURLcode "CURLE_OK")
+
+  (defmodule Code
+    (register = (λ [CURLcode CURLcode] Bool)))
+
+  )

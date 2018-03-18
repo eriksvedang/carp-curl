@@ -1,0 +1,18 @@
+(load "Curl.carp")
+(use Curl)
+
+(defn handler [s elem-size elem-count file]
+  (IO.fwrite (the (Ptr Char) s) elem-size elem-count file))
+
+(defn main []
+  (do (global-init global-default)
+      (let-do [curl (easy-init)
+               file (IO.fopen @"saved_page.html" @"wb")]
+        (easy-setopt curl opt-url (cstr "https://www.example.com"))
+        (easy-setopt curl opt-write-function handler)
+        (easy-setopt curl opt-write-data file)
+        (let-do [result (easy-perform curl)]
+          (if (= result ok)
+            (IO.println "Success! Created file 'saved_page.html'")
+            (println* "ERROR: " (easy-strerror result)))))
+      (global-cleanup)))

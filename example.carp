@@ -7,7 +7,7 @@
 (defn main []
   (do (global-init global-default)
       (let-do [curl (easy-init)
-               file (IO.fopen @"saved_page.html" @"wb")]
+               file (IO.fopen "saved_page.html" "wb")]
         (easy-setopt curl opt-url (cstr "https://www.example.com"))
         (easy-setopt curl opt-write-function handler)
         (easy-setopt curl opt-write-data file)
